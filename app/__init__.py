@@ -42,6 +42,9 @@ def create_app(config_name):
     from app.api_1_0.article import article as article_blueprint
     app.register_blueprint(article_blueprint, url_prefix='/api/v1.0/article')
 
+    from app.api_1_0.image import image as image_blueprint
+    app.register_blueprint(image_blueprint, url_prefix='/api/v1.0/image')
+
     return app
 
 

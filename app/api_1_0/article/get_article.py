@@ -18,7 +18,7 @@ class GetOneArticle(Resource):
         article = Article.query.filter_by(article_uuid=article_uuid).first()
         if not article:
             return Util.make_result(Code.NOT_FOUND, msg=Code.msg[Code.NOT_FOUND])
-        return Util.make_result(data=article.article_json())
+        return Util.make_result(data=article.article_detail_json())
 
 
 # 查询全部文章
@@ -34,7 +34,7 @@ class GetAllArticle(Resource):
         if not per_page:
             per_page = current_app.config['ARTICLE_PER_PAGE'][0]
         pagination = Article.query.order_by(Article.pub_time.desc())\
-            .paginate(page=self.get_args.get('page'), per_page=per_page,error_out=False)
+            .paginate(page=self.get_args.get('page'), per_page=per_page, error_out=False)
         articles = pagination.items
         return Util.make_result(data={
             'articles': [article.article_json() for article in articles],

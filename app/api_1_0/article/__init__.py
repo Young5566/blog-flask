@@ -11,6 +11,7 @@ from flask_restful import Api
 from app.api_1_0.article.post_article import PostArticle
 from app.api_1_0.article.delete_article import DeleteArticle
 from app.api_1_0.article.get_article import GetOneArticle, GetAllArticle, GetArticleByTag, GetAllTag
+from app.api_1_0.article.update_article import UpdateArticle
 
 article = Blueprint('article', __name__)
 source = Api(article)
@@ -21,3 +22,4 @@ source.add_resource(GetOneArticle, '/getOneArticle/<string:article_uuid>', endpo
 source.add_resource(GetAllArticle, '/getAllArticle', endpoint='get_all_article')
 source.add_resource(GetArticleByTag, '/getArticleByTag', endpoint='get_article_by_tag')
 source.add_resource(GetAllTag, '/getAllTag', endpoint='get_all_tag')
+source.add_resource(UpdateArticle, '/updateArticle', endpoint='update_article')

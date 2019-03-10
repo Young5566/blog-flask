@@ -13,6 +13,7 @@ from datetime import *
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from uuid import uuid4
 import time
+from app.util.util import Util
 
 
 class User(db.Model):
@@ -63,7 +64,7 @@ class User(db.Model):
             "user_name": self.user_name,
             "email": self.email,
             "head_img": self.head_img,
-            "token": self.generate_confirmation_token()
+            "token": self.generate_confirmation_token().decode('utf-8')
         }
 
         return user_info
@@ -79,7 +80,7 @@ class Article(db.Model):
     tags = db.Column(db.String(64), nullable=False)
     second_tags = db.Column(db.String(64), nullable=False)
     author_uuid = db.Column(db.String(64), db.ForeignKey('user.user_uuid'))
-    article_img = db.Column(db.String(128), nullable=False, default="http://pic1.win4000.com/wallpaper/2017-10-11/59ddb17491bcf.jpg")
+    article_img_uuid = db.Column(db.String(64), db.ForeignKey('image.image_uuid'))
     pub_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
     def __repr__(self):
@@ -112,16 +113,29 @@ class Article(db.Model):
             db.session.add(article)
             db.session.commit()
 
-    def utc2local(self, utc_st):
-        now_stamp = time.time()
-        local_time = datetime.fromtimestamp(now_stamp)
-        utc_time = datetime.utcfromtimestamp(now_stamp)
-        offset = local_time - utc_time
-        local_st = utc_st + offset
-        return local_st
-
     def article_json(self):
+        image_url = ''
+        if self.article_img_uuid is not None:
+            image_url = self.image.image_url
         article_json = {
+            "article_uuid": self.article_uuid,
+            "title": self.title,
+            "abstract": self.abstract,
+            "tags": self.tags,
+            "second_tags": self.second_tags,
+            "author": self.author.user_name,
+            "image_url": image_url,
+            "image_uuid": self.article_img_uuid,
+            "pub_time": Util.utc2local(self.pub_time).strftime("%Y-%m-%d %H:%M")
+            # "pub_time": Util.utc2local(self.pub_time).strftime("%Y-%m-%d")
+        }
+        return article_json
+
+    def article_detail_json(self):
+        image_url = ''
+        if self.article_img_uuid is not None:
+                image_url = self.image.image_url
+        article_detail_json = {
             "article_uuid": self.article_uuid,
             "title": self.title,
             "abstract": self.abstract,
@@ -129,8 +143,52 @@ class Article(db.Model):
             "tags": self.tags,
             "second_tags": self.second_tags,
             "author": self.author.user_name,
-            "article_img": self.article_img,
-            # "pub_time": self.utc2local(self.pub_time).strftime("%Y-%m-%d %H:%M:%S")
-            "pub_time": self.utc2local(self.pub_time).strftime("%Y-%m-%d")
+            "image_url": image_url,
+            "image_uuid": self.article_img_uuid,
+            "pub_time": Util.utc2local(self.pub_time).strftime("%Y-%m-%d %H:%M")
+            # "pub_time": Util.utc2local(self.pub_time).strftime("%Y-%m-%d")
         }
-        return article_json
+
+        return article_detail_json
+
+
+class Image(db.Model):
+    __tablename__ = 'image'
+
+    image_uuid = db.Column(db.String(64), primary_key=True, nullable=False)
+    file_uuid = db.Column(db.String(64), nullable=False)
+    name = db.Column(db.String(128), nullable=False)
+    group_name = db.Column(db.String(64), nullable=False)
+    remote_file_id = db.Column(db.String(128), nullable=False)
+    storage_ip = db.Column(db.String(64), nullable=False)
+    size = db.Column(db.Integer, nullable=False)
+    image_url = db.Column(db.String(128), nullable=False)
+    article = db.relationship('Article', backref='image', lazy='dynamic')
+    create_time = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
+    def image_json(self):
+        image_json = {
+            "image_uuid": self.image_uuid,
+            "file_uuid": self.file_uuid,
+            "image_name": self.name,
+            "image_url": self.image_url,
+            "remote_file_id": self.remote_file_id,
+            "used_count": len(list(self.article))
+        }
+
+        return image_json
+
+    def image_detail_json(self):
+        image_detail_json = {
+            "image_uuid": self.image_uuid,
+            "file_uuid": self.file_uuid,
+            "image_name": self.name,
+            "image_url": self.image_url,
+            "group_name": self.group_name,
+            "remote_file_id": self.remote_file_id,
+            "storage_ip": self.storage_ip,
+            "size": self.size,
+            "create_time": Util.utc2local(self.create_time).strftime("%Y-%m-%d %H:%M:%S")
+        }
+
+        return image_detail_json

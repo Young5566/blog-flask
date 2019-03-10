@@ -7,7 +7,8 @@
 @Software: PyCharm
 """
 from flask import jsonify
-import uuid
+import uuid, time
+from datetime import datetime
 
 
 class Code:
@@ -50,3 +51,12 @@ class Util(object):
     @staticmethod
     def get_uuid():
         return str(uuid.uuid4())
+
+    @staticmethod
+    def utc2local(utc_st):
+        now_stamp = time.time()
+        local_time = datetime.fromtimestamp(now_stamp)
+        utc_time = datetime.utcfromtimestamp(now_stamp)
+        offset = local_time - utc_time
+        local_st = utc_st + offset
+        return local_st

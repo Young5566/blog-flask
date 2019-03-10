@@ -25,7 +25,7 @@ class PostArticle(Resource):
         self.post_parser.add_argument('content', type=str, location='json', required=True)
         self.post_parser.add_argument('tags', type=str, location='json', required=True)
         self.post_parser.add_argument('secondTags', type=str, location='json', required=True)
-        self.post_parser.add_argument('article_img', type=str, location='json')
+        self.post_parser.add_argument('image_uuid', type=str, location='json', required=True)
         self.post_parser.add_argument('abstract', type=str, location='json', required=True)
         self.post_args = self.post_parser.parse_args()
 
@@ -36,7 +36,7 @@ class PostArticle(Resource):
             content=self.post_args.get('content'),
             tags=self.post_args.get('tags'),
             second_tags=self.post_args.get('secondTags'),
-            article_img=self.post_args.get('article_img'),
+            article_img_uuid=self.post_args.get('image_uuid'),
             abstract=self.post_args.get('abstract'),
             author_uuid=g.get('user').user_uuid
         )
