@@ -21,7 +21,7 @@ cssselect==1.0.3
 curses==2.2
 dask==0.17.5
 decorator==4.3.0
-Django==1.11
+Django==1.11.29
 django-cors-headers==2.2.0
 django-rest-framework==0.1.0
 djangorestframework==3.8.2
