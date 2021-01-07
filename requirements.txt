@@ -69,7 +69,7 @@ jupyter-core==4.4.0
 jupyter-highlight-selected-word==0.2.0
 jupyter-latex-envs==1.4.4
 jupyter-nbextensions-configurator==0.4.0
-lxml==4.2.1
+lxml==4.6.2
 Mako==1.0.7
 Markdown==2.6.8
 markdown2==2.3.5
