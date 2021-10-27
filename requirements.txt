@@ -19,7 +19,7 @@ constantly==15.1.0
 cryptography==2.2.1
 cssselect==1.0.3
 curses==2.2
-dask==0.17.5
+dask==2021.10.0
 decorator==4.3.0
 Django==1.11
 django-cors-headers==2.2.0
